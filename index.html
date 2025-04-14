@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="msapplication-TileColor" content="#ffffff">
     <title>Car Sales Business Profitability Calculator</title>
     <style>
         :root {
@@ -23,15 +25,18 @@
         }
         
         body {
-            background-color: #f8f9fc;
+            background-color: transparent;
             color: #5a5c69;
             line-height: 1.6;
-            padding: 20px;
+            padding: 10px;
+            overflow-x: hidden;
+            margin: 0;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            padding: 0 5px;
         }
         
         .calculator {
@@ -364,11 +369,33 @@
         </div>
         
         <footer>
-            Car Sales Business Profitability Calculator | GitHub Pages
+            Car Sales Business Profitability Calculator
         </footer>
     </div>
 
     <script>
+        // Ensure the page works properly inside an iframe (for MS Teams)
+        if (window.parent !== window) {
+            document.addEventListener('DOMContentLoaded', function() {
+                // Send height information to parent frame
+                function sendHeight() {
+                    const height = document.body.scrollHeight;
+                    window.parent.postMessage({ height: height }, '*');
+                }
+                
+                // Send initial height
+                setTimeout(sendHeight, 100);
+                
+                // Recalculate when window resizes
+                window.addEventListener('resize', sendHeight);
+                
+                // Prevent links from opening in new tabs
+                document.querySelectorAll('a').forEach(link => {
+                    link.setAttribute('target', '_self');
+                });
+            });
+        }
+        
         // DOM elements for sliders
         const wholesaleCarsSlider = document.getElementById('wholesale-cars');
         const retailCarsSlider = document.getElementById('retail-cars');
@@ -515,6 +542,13 @@
         
         // Initial calculation
         calculateProjections();
+        
+        // Force recalculation when loaded in iframe
+        window.addEventListener('message', function(event) {
+            if (event.data === 'recalculate') {
+                calculateProjections();
+            }
+        });
     </script>
 </body>
 </html>
